@@ -10,6 +10,8 @@
 
 using namespace std;
 
+int fanstate = 0;
+
 int setGpio(char c,unsigned int state)
 {
     state&=1;
@@ -30,10 +32,18 @@ int getTemp()
 
 int loop()
 {
-    if (getTemp()>60)
+    int temp = getTemp();
+    if (temp>60)
+    {
+        if (!fanstate)
+            fanstate = 1;
         setGpio('l',0);
+    }
     else
         setGpio('l',1);
+    if (temp<40 && fanstate)
+        fanstate = 0;
+    setGpio('f',fanstate);
 }
 
 
